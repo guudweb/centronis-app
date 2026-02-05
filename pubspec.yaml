@@ -1,0 +1,78 @@
+name: centronis_app
+description: Centronis - Sistema de Gestión Escolar
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Navigation
+  go_router: ^17.1.0
+
+  # State Management
+  flutter_riverpod: ^3.2.1
+  riverpod_annotation: ^4.0.2
+
+  # HTTP & Networking
+  dio: ^5.9.1
+
+  # Local Storage
+  flutter_secure_storage: ^10.0.0
+  shared_preferences: ^2.5.4
+
+  # UI Components
+  fl_chart: ^1.1.1
+  table_calendar: ^3.2.0
+  lucide_icons: ^0.257.0
+  cached_network_image: ^3.4.1
+  shimmer: ^3.0.0
+
+  # Forms & Validation
+  reactive_forms: ^18.2.2
+
+  # PDF
+  pdf: ^3.11.2
+  printing: ^5.14.2
+
+  # Notifications
+  fluttertoast: ^8.2.10
+
+  # Internationalization
+  intl: ^0.20.2
+
+  # Data Classes
+  json_annotation: ^4.10.0
+  freezed_annotation: ^3.2.5
+
+  # Utilities
+  image_picker: ^1.1.2
+  url_launcher: ^6.3.1
+  flutter_svg: ^2.0.17
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.11.0
+  json_serializable: ^6.12.0
+  freezed: ^3.2.5
+  riverpod_generator: ^4.0.3
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/images/
+
+  # fonts:
+  #   - family: CustomFont
+  #     fonts:
+  #       - asset: assets/fonts/CustomFont-Regular.ttf
