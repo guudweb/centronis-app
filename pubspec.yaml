@@ -64,6 +64,14 @@ dev_dependencies:
   json_serializable: ^6.12.0
   freezed: ^3.2.5
   riverpod_generator: ^4.0.3
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "launcher_icons/ic_launcher_play.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "launcher_icons/ic_launcher_play.png"
 
 flutter:
   uses-material-design: true
