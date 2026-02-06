@@ -63,6 +63,13 @@ class AuthNotifier extends Notifier<AuthState> {
     if (state.initialized) return;
 
     try {
+      // Check if we have a saved token first
+      final savedToken = await _storage.getSessionToken();
+      if (savedToken == null) {
+        state = state.copyWith(sessionActive: false, initialized: true);
+        return;
+      }
+
       final sessionData = await _authService.getSession();
       if (sessionData['session'] != null && sessionData['user'] != null) {
         state = state.copyWith(sessionActive: true);
@@ -81,7 +88,12 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<bool> login(String email, String password) async {
     state = state.copyWith(loading: true, clearError: true);
     try {
-      await _authService.signIn(email, password);
+      final data = await _authService.signIn(email, password);
+      // Extract session token from Better Auth response body
+      final token = data['session']?['token'] as String?;
+      if (token != null) {
+        await _storage.saveSessionToken(token);
+      }
       state = state.copyWith(sessionActive: true);
       final success = await fetchCurrentUser();
       return success;

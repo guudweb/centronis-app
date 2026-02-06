@@ -35,17 +35,23 @@ class Announcement {
     this.course,
   });
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+
+  static int? _toIntNullable(dynamic v) =>
+      v == null ? null : (v is int ? v : int.tryParse(v.toString()));
+
   factory Announcement.fromJson(Map<String, dynamic> json) {
     return Announcement(
-      id: json['id'] as int,
-      title: json['title'] as String,
-      content: json['content'] as String,
+      id: _toInt(json['id']),
+      title: json['title'] as String? ?? '',
+      content: json['content'] as String? ?? '',
       type: json['type'] as String?,
-      authorId: json['author_id'] as int? ?? 0,
-      institutionId: json['institution_id'] as int? ?? 0,
+      authorId: _toInt(json['author_id']),
+      institutionId: _toInt(json['institution_id']),
       targetAudience: json['target_audience'] as String?,
       priority: json['priority'] as String? ?? 'normal',
-      courseId: json['course_id'] as int?,
+      courseId: _toIntNullable(json['course_id']),
       published: json['published'] as bool? ?? true,
       publishDate: json['publish_date'] as String?,
       expiryDate: json['expiry_date'] as String?,
@@ -89,7 +95,7 @@ class AnnouncementAuthor {
 
   factory AnnouncementAuthor.fromJson(Map<String, dynamic> json) {
     return AnnouncementAuthor(
-      id: json['id'] as int,
+      id: json['id'] is int ? json['id'] as int : int.tryParse(json['id']?.toString() ?? '') ?? 0,
       firstName: json['first_name'] as String? ?? '',
       lastName: json['last_name'] as String? ?? '',
     );
@@ -104,8 +110,8 @@ class AnnouncementCourseRef {
 
   factory AnnouncementCourseRef.fromJson(Map<String, dynamic> json) {
     return AnnouncementCourseRef(
-      id: json['id'] as int,
-      name: json['name'] as String,
+      id: json['id'] is int ? json['id'] as int : int.tryParse(json['id']?.toString() ?? '') ?? 0,
+      name: json['name'] as String? ?? '',
     );
   }
 }

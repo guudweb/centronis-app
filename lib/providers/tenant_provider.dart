@@ -52,6 +52,8 @@ class TenantNotifier extends Notifier<TenantState> {
     state = state.copyWith(loading: true, clearError: true);
     try {
       final response = await _dio.get('/institutions/by-slug/$slug');
+      // ignore: avoid_print
+      print('[TENANT] status=${response.statusCode} body=${response.data}');
       final data = response.data as Map<String, dynamic>;
       if (data['success'] == true && data['data'] != null) {
         final institution =

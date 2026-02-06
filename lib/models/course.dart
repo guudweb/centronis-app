@@ -33,17 +33,23 @@ class Course {
     this.enrolledStudents,
   });
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+
+  static int? _toIntNullable(dynamic v) =>
+      v == null ? null : (v is int ? v : int.tryParse(v.toString()));
+
   factory Course.fromJson(Map<String, dynamic> json) {
     return Course(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      code: json['code'] as String,
+      id: _toInt(json['id']),
+      name: json['name'] as String? ?? '',
+      code: json['code'] as String? ?? '',
       level: json['level'] as String?,
       section: json['section'] as String?,
-      capacity: json['capacity'] as int?,
-      academicPeriodId: json['academic_period_id'] as int? ?? 0,
-      gradeScaleId: json['grade_scale_id'] as int?,
-      institutionId: json['institution_id'] as int? ?? 0,
+      capacity: _toIntNullable(json['capacity']),
+      academicPeriodId: _toInt(json['academic_period_id']),
+      gradeScaleId: _toIntNullable(json['grade_scale_id']),
+      institutionId: _toInt(json['institution_id']),
       active: json['active'] as bool? ?? true,
       createdAt: json['created_at'] as String? ?? '',
       updatedAt: json['updated_at'] as String? ?? '',
@@ -55,7 +61,7 @@ class Course {
           ? GradeScaleRef.fromJson(
               json['grade_scale'] as Map<String, dynamic>)
           : null,
-      enrolledStudents: json['enrolled_students'] as int?,
+      enrolledStudents: _toIntNullable(json['enrolled_students']),
     );
   }
 
@@ -91,8 +97,8 @@ class AcademicPeriodRef {
 
   factory AcademicPeriodRef.fromJson(Map<String, dynamic> json) {
     return AcademicPeriodRef(
-      id: json['id'] as int,
-      name: json['name'] as String,
+      id: json['id'] is int ? json['id'] as int : int.tryParse(json['id']?.toString() ?? '') ?? 0,
+      name: json['name'] as String? ?? '',
       code: json['code'] as String? ?? '',
       type: json['type'] as String? ?? '',
       startDate: json['start_date'] as String? ?? '',
@@ -115,8 +121,8 @@ class GradeScaleRef {
 
   factory GradeScaleRef.fromJson(Map<String, dynamic> json) {
     return GradeScaleRef(
-      id: json['id'] as int,
-      name: json['name'] as String,
+      id: json['id'] is int ? json['id'] as int : int.tryParse(json['id']?.toString() ?? '') ?? 0,
+      name: json['name'] as String? ?? '',
       type: json['type'] as String? ?? '',
     );
   }

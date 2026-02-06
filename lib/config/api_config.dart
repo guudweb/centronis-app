@@ -9,5 +9,5 @@ class ApiConfig {
   static const String tenantHeader = 'X-Tenant-Slug';
 
   // Session cookie name
-  static const String sessionCookieName = 'better-auth.session_token';
+  static const String sessionCookieName = 'centronis.session_token';
 }

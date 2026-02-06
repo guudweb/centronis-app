@@ -48,10 +48,13 @@ class Student {
   String get fullName =>
       user != null ? '${user!.firstName} ${user!.lastName}' : '';
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+
   factory Student.fromJson(Map<String, dynamic> json) {
     return Student(
-      id: json['id'] as int,
-      userId: json['user_id'] as int? ?? 0,
+      id: _toInt(json['id']),
+      userId: _toInt(json['user_id']),
       studentCode: json['student_code'] as String? ?? '',
       admissionDate: json['admission_date'] as String? ?? '',
       guardian1Name: json['guardian1_name'] as String?,
@@ -72,7 +75,7 @@ class Student {
       user: json['user'] != null
           ? StudentUser.fromJson(json['user'] as Map<String, dynamic>)
           : null,
-      activeEnrollments: json['active_enrollments'] as int?,
+      activeEnrollments: json['active_enrollments'] != null ? _toInt(json['active_enrollments']) : null,
     );
   }
 
@@ -137,7 +140,7 @@ class StudentUser {
 
   factory StudentUser.fromJson(Map<String, dynamic> json) {
     return StudentUser(
-      id: json['id'] as int,
+      id: json['id'] is int ? json['id'] as int : int.tryParse(json['id']?.toString() ?? '') ?? 0,
       email: json['email'] as String? ?? '',
       firstName: json['first_name'] as String? ?? '',
       lastName: json['last_name'] as String? ?? '',

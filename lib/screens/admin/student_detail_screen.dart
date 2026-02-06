@@ -34,14 +34,16 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen> {
     try {
       final results = await Future.wait([
         ref.read(studentsServiceProvider).getById(widget.studentId),
-        ref.read(enrollmentsServiceProvider).getStudentEnrollments(widget.studentId),
+        ref.read(enrollmentsServiceProvider).getStudentEnrollments(widget.studentId).catchError((_) => <dynamic>[]),
       ]);
+      if (!mounted) return;
       setState(() {
         _student = (results[0] as dynamic).data;
         _enrollments = results[1] as List<dynamic>;
         _loading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }

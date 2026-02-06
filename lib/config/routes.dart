@@ -70,6 +70,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         return '/auth/tenant';
       }
 
+      // Si tenant resuelto y sigue en /auth/tenant, ir a login
+      if (tenantState.isResolved && !loggedIn && state.matchedLocation == '/auth/tenant') {
+        return '/auth/login';
+      }
+
       // Si tenant resuelto pero no logueado y no en ruta auth, ir a login
       if (tenantState.isResolved && !loggedIn && !inAuthRoute) {
         return '/auth/login';

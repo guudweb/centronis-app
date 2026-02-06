@@ -74,12 +74,15 @@ class Pagination {
     required this.hasPrev,
   });
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+
   factory Pagination.fromJson(Map<String, dynamic> json) {
     return Pagination(
-      page: json['page'] as int? ?? 1,
-      limit: json['limit'] as int? ?? 10,
-      total: json['total'] as int? ?? 0,
-      totalPages: json['totalPages'] as int? ?? 0,
+      page: _toInt(json['page'], 1),
+      limit: _toInt(json['limit'], 10),
+      total: _toInt(json['total']),
+      totalPages: _toInt(json['totalPages']),
       hasNext: json['hasNext'] as bool? ?? false,
       hasPrev: json['hasPrev'] as bool? ?? false,
     );

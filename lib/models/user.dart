@@ -47,15 +47,21 @@ class User {
 
   String get roleName => role?.name ?? roleCode ?? '';
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+
+  static int? _toIntNullable(dynamic v) =>
+      v == null ? null : (v is int ? v : int.tryParse(v.toString()));
+
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'].toString(),
-      email: json['email'] as String,
+      email: json['email'] as String? ?? '',
       firstName: json['first_name'] as String? ?? '',
       lastName: json['last_name'] as String? ?? '',
-      roleId: json['role_id'] as int? ?? 0,
+      roleId: _toInt(json['role_id']),
       roleCode: json['role_code'] as String?,
-      institutionId: json['institution_id'] as int?,
+      institutionId: _toIntNullable(json['institution_id']),
       active: json['active'] as bool? ?? true,
       emailVerified: json['email_verified'] as bool? ?? false,
       phone: json['phone'] as String?,
@@ -72,8 +78,8 @@ class User {
           ? InstitutionRef.fromJson(
               json['institution'] as Map<String, dynamic>)
           : null,
-      studentId: json['student_id'] as int?,
-      teacherId: json['teacher_id'] as int?,
+      studentId: _toIntNullable(json['student_id']),
+      teacherId: _toIntNullable(json['teacher_id']),
     );
   }
 
@@ -110,9 +116,9 @@ class Role {
 
   factory Role.fromJson(Map<String, dynamic> json) {
     return Role(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      code: json['code'] as String,
+      id: json['id'] is int ? json['id'] as int : int.tryParse(json['id']?.toString() ?? '') ?? 0,
+      name: json['name'] as String? ?? '',
+      code: json['code'] as String? ?? '',
       permissions: (json['permissions'] as List<dynamic>?)?.cast<String>(),
     );
   }
@@ -135,8 +141,8 @@ class InstitutionRef {
 
   factory InstitutionRef.fromJson(Map<String, dynamic> json) {
     return InstitutionRef(
-      id: json['id'] as int,
-      name: json['name'] as String,
+      id: json['id'] is int ? json['id'] as int : int.tryParse(json['id']?.toString() ?? '') ?? 0,
+      name: json['name'] as String? ?? '',
       code: json['code'] as String? ?? '',
       timezone: json['timezone'] as String?,
       currency: json['currency'] as String?,

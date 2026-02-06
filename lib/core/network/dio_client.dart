@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -23,6 +25,14 @@ class DioClient {
         extra: kIsWeb ? {'withCredentials': true} : {},
       ),
     );
+
+    // Allow self-signed certs and bypass SSL issues (debug only)
+    if (!kIsWeb) {
+      (dio.httpClientAdapter as dynamic).onHttpClientCreate = (HttpClient client) {
+        client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+        return client;
+      };
+    }
 
     dio.interceptors.add(_authInterceptor());
     dio.interceptors.add(_loggingInterceptor());

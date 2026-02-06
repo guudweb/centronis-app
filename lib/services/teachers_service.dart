@@ -94,11 +94,14 @@ class TeacherCourseSubject {
     this.assignedAt,
   });
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+
   factory TeacherCourseSubject.fromJson(Map<String, dynamic> json) {
     return TeacherCourseSubject(
-      courseId: json['course_id'] as int,
+      courseId: _toInt(json['course_id']),
       courseName: json['course_name'] as String? ?? '',
-      subjectId: json['subject_id'] as int,
+      subjectId: _toInt(json['subject_id']),
       subjectName: json['subject_name'] as String? ?? '',
       isPrimary: json['is_primary'] as bool? ?? false,
       assignedAt: json['assigned_at'] as String?,
@@ -129,13 +132,16 @@ class ScheduleEntry {
     this.timeBlock,
   });
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+
   factory ScheduleEntry.fromJson(Map<String, dynamic> json) {
     return ScheduleEntry(
-      id: json['id'] as int,
-      courseId: json['course_id'] as int,
-      subjectId: json['subject_id'] as int,
-      teacherId: json['teacher_id'] as int,
-      dayOfWeek: json['day_of_week'] as int,
+      id: _toInt(json['id']),
+      courseId: _toInt(json['course_id']),
+      subjectId: _toInt(json['subject_id']),
+      teacherId: _toInt(json['teacher_id']),
+      dayOfWeek: _toInt(json['day_of_week']),
       classroom: json['classroom'] as String?,
       course: json['course'] != null
           ? ScheduleCourse.fromJson(json['course'] as Map<String, dynamic>)
@@ -161,8 +167,8 @@ class ScheduleCourse {
 
   factory ScheduleCourse.fromJson(Map<String, dynamic> json) {
     return ScheduleCourse(
-      id: json['id'] as int,
-      name: json['name'] as String,
+      id: json['id'] is int ? json['id'] as int : int.tryParse(json['id']?.toString() ?? '') ?? 0,
+      name: json['name'] as String? ?? '',
       code: json['code'] as String? ?? '',
     );
   }
@@ -178,8 +184,8 @@ class ScheduleSubject {
 
   factory ScheduleSubject.fromJson(Map<String, dynamic> json) {
     return ScheduleSubject(
-      id: json['id'] as int,
-      name: json['name'] as String,
+      id: json['id'] is int ? json['id'] as int : int.tryParse(json['id']?.toString() ?? '') ?? 0,
+      name: json['name'] as String? ?? '',
       code: json['code'] as String? ?? '',
     );
   }
@@ -195,7 +201,7 @@ class ScheduleTimeBlock {
 
   factory ScheduleTimeBlock.fromJson(Map<String, dynamic> json) {
     return ScheduleTimeBlock(
-      id: json['id'] as int,
+      id: json['id'] is int ? json['id'] as int : int.tryParse(json['id']?.toString() ?? '') ?? 0,
       startTime: json['start_time'] as String? ?? '',
       endTime: json['end_time'] as String? ?? '',
     );

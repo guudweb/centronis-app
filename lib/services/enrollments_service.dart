@@ -70,12 +70,15 @@ class EnrolledStudent {
 
   String get fullName => '$firstName $lastName';
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+
   factory EnrolledStudent.fromJson(Map<String, dynamic> json) {
     final student = json['student'] as Map<String, dynamic>?;
     final user = student?['user'] as Map<String, dynamic>?;
     return EnrolledStudent(
-      enrollmentId: json['id'] as int? ?? 0,
-      studentId: student?['id'] as int? ?? json['student_id'] as int? ?? 0,
+      enrollmentId: _toInt(json['id']),
+      studentId: _toInt(student?['id'] ?? json['student_id']),
       studentCode: student?['student_code'] as String? ?? '',
       firstName: user?['first_name'] as String? ?? '',
       lastName: user?['last_name'] as String? ?? '',
@@ -104,7 +107,7 @@ class StudentEnrollment {
 
   factory StudentEnrollment.fromJson(Map<String, dynamic> json) {
     return StudentEnrollment(
-      id: json['id'] as int,
+      id: json['id'] is int ? json['id'] as int : int.tryParse(json['id']?.toString() ?? '') ?? 0,
       enrollmentDate: json['enrollment_date'] as String? ?? '',
       status: json['status'] as String? ?? 'active',
       finalGrade: (json['final_grade'] as num?)?.toDouble(),
@@ -136,7 +139,7 @@ class EnrollmentCourse {
 
   factory EnrollmentCourse.fromJson(Map<String, dynamic> json) {
     return EnrollmentCourse(
-      id: json['id'] as int,
+      id: json['id'] is int ? json['id'] as int : int.tryParse(json['id']?.toString() ?? '') ?? 0,
       name: json['name'] as String? ?? '',
       code: json['code'] as String? ?? '',
       section: json['section'] as String?,
@@ -158,7 +161,7 @@ class EnrollmentPeriod {
 
   factory EnrollmentPeriod.fromJson(Map<String, dynamic> json) {
     return EnrollmentPeriod(
-      id: json['id'] as int,
+      id: json['id'] is int ? json['id'] as int : int.tryParse(json['id']?.toString() ?? '') ?? 0,
       name: json['name'] as String? ?? '',
       code: json['code'] as String? ?? '',
     );

@@ -50,31 +50,27 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
     setState(() => _loading = true);
 
     try {
-      // Fetch all stats in parallel
+      // Fetch all stats in parallel - each wrapped so one failure doesn't break all
       final results = await Future.wait([
-        ref.read(studentsServiceProvider).getAll(page: 1, limit: 1),
-        ref.read(teachersServiceProvider).getAll(page: 1, limit: 1),
-        ref.read(coursesServiceProvider).getAll(page: 1, limit: 1),
-        ref.read(announcementsServiceProvider).getAll(page: 1, limit: 5),
+        ref.read(studentsServiceProvider).getAll(page: 1, limit: 1).then<dynamic>((r) => r).catchError((_) => null),
+        ref.read(teachersServiceProvider).getAll(page: 1, limit: 1).then<dynamic>((r) => r).catchError((_) => null),
+        ref.read(coursesServiceProvider).getAll(page: 1, limit: 1).then<dynamic>((r) => r).catchError((_) => null),
+        ref.read(announcementsServiceProvider).getAll(page: 1, limit: 5).then<dynamic>((r) => r).catchError((_) => null),
       ]);
 
-      final studentsResponse = results[0];
-      final teachersResponse = results[1];
-      final coursesResponse = results[2];
-      final announcementsResponse = results[3];
-
+      if (!mounted) return;
       setState(() {
         _stats = _DashboardStats(
-          totalStudents: (studentsResponse as dynamic).pagination.total,
-          totalTeachers: (teachersResponse as dynamic).pagination.total,
-          totalCourses: (coursesResponse as dynamic).pagination.total,
-          totalAnnouncements:
-              (announcementsResponse as dynamic).pagination.total,
+          totalStudents: results[0]?.pagination?.total ?? 0,
+          totalTeachers: results[1]?.pagination?.total ?? 0,
+          totalCourses: results[2]?.pagination?.total ?? 0,
+          totalAnnouncements: results[3]?.pagination?.total ?? 0,
         );
-        _recentAnnouncements = (announcementsResponse as dynamic).data;
+        _recentAnnouncements = (results[3]?.data as List<dynamic>?) ?? [];
         _loading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }

@@ -10,9 +10,15 @@ void main() async {
 
   final container = ProviderContainer();
 
-  // Initialize tenant and auth before app starts
-  await container.read(tenantProvider.notifier).initializeFromStorage();
-  await container.read(authProvider.notifier).initialize();
+  // Try to initialize from storage, but don't block app if API is down
+  try {
+    await container.read(tenantProvider.notifier).initializeFromStorage()
+        .timeout(const Duration(seconds: 5));
+    await container.read(authProvider.notifier).initialize()
+        .timeout(const Duration(seconds: 5));
+  } catch (_) {
+    // App will show tenant/login screen if initialization fails
+  }
 
   runApp(
     UncontrolledProviderScope(
