@@ -8,6 +8,7 @@ class ApiConfig {
   // Tenant header key
   static const String tenantHeader = 'X-Tenant-Slug';
 
-  // Session cookie name
-  static const String sessionCookieName = 'centronis.session_token';
+  // Session cookie names (Better Auth adds __Secure- prefix over HTTPS)
+  static const String sessionCookieName = '__Secure-centronis.session_token';
+  static const String sessionDataCookieName = '__Secure-centronis.session_data';
 }

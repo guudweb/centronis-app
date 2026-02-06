@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/storage/secure_storage.dart';
@@ -88,16 +89,28 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<bool> login(String email, String password) async {
     state = state.copyWith(loading: true, clearError: true);
     try {
-      final data = await _authService.signIn(email, password);
-      // Extract session token from Better Auth response body
-      final token = data['session']?['token'] as String?;
-      if (token != null) {
-        await _storage.saveSessionToken(token);
-      }
+      await _authService.signIn(email, password);
+      // Token is extracted from Set-Cookie by the DioClient interceptor.
+      // Don't save data['token'] here - it's only the token ID without
+      // the signature, while the cookie has the full signed value.
+      // Give the interceptor a moment to persist the cookie.
+      await Future<void>.delayed(const Duration(milliseconds: 100));
       state = state.copyWith(sessionActive: true);
       final success = await fetchCurrentUser();
       return success;
+    } on DioException catch (e) {
+      final responseData = e.response?.data;
+      String errorMsg = 'Error al iniciar sesión';
+      if (responseData is Map<String, dynamic>) {
+        errorMsg = responseData['message'] as String? ?? errorMsg;
+      }
+      // ignore: avoid_print
+      print('[AUTH] Login error: ${e.response?.statusCode} $responseData');
+      state = state.copyWith(error: errorMsg, loading: false);
+      return false;
     } catch (e) {
+      // ignore: avoid_print
+      print('[AUTH] Login unexpected error: $e');
       state = state.copyWith(
         error: 'Error al iniciar sesión',
         loading: false,

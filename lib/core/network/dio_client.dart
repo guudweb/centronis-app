@@ -21,7 +21,10 @@ class DioClient {
         baseUrl: ApiConfig.baseUrl,
         connectTimeout: ApiConfig.connectTimeout,
         receiveTimeout: ApiConfig.receiveTimeout,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          if (!kIsWeb) 'Origin': 'https://api.centronis.com',
+        },
         extra: kIsWeb ? {'withCredentials': true} : {},
       ),
     );
@@ -47,17 +50,25 @@ class DioClient {
           options.headers[ApiConfig.tenantHeader] = tenantSlug;
         }
 
-        // Add session cookie
+        // Build Cookie header with all saved session cookies
+        final cookieParts = <String>[];
         final sessionToken = await _storage.read(key: 'session_token');
         if (sessionToken != null) {
-          options.headers['Cookie'] =
-              '${ApiConfig.sessionCookieName}=$sessionToken';
+          cookieParts.add('${ApiConfig.sessionCookieName}=$sessionToken');
+          options.headers['Authorization'] = 'Bearer $sessionToken';
+        }
+        final sessionData = await _storage.read(key: 'session_data');
+        if (sessionData != null) {
+          cookieParts.add('${ApiConfig.sessionDataCookieName}=$sessionData');
+        }
+        if (cookieParts.isNotEmpty) {
+          options.headers['Cookie'] = cookieParts.join('; ');
         }
 
         handler.next(options);
       },
-      onResponse: (response, handler) {
-        // Extract and persist session cookie from Set-Cookie header
+      onResponse: (response, handler) async {
+        // Extract and persist all session cookies from Set-Cookie header
         final cookies = response.headers['set-cookie'];
         if (cookies != null) {
           for (final cookie in cookies) {
@@ -67,7 +78,16 @@ class DioClient {
                 ApiConfig.sessionCookieName,
               );
               if (token != null) {
-                _storage.write(key: 'session_token', value: token);
+                await _storage.write(key: 'session_token', value: token);
+              }
+            }
+            if (cookie.contains(ApiConfig.sessionDataCookieName)) {
+              final data = _extractCookieValue(
+                cookie,
+                ApiConfig.sessionDataCookieName,
+              );
+              if (data != null) {
+                await _storage.write(key: 'session_data', value: data);
               }
             }
           }
@@ -85,7 +105,25 @@ class DioClient {
       onRequest: (options, handler) {
         // ignore: avoid_print
         print('[API] ${options.method} ${options.uri}');
+        // ignore: avoid_print
+        if (options.headers['Authorization'] != null) {
+          final auth = options.headers['Authorization'] as String;
+          print('[API] Auth header: ${auth.substring(0, 20)}...');
+        }
+        // ignore: avoid_print
+        if (options.headers['Cookie'] != null) {
+          final cookie = options.headers['Cookie'] as String;
+          print('[API] Cookie header: ${cookie.substring(0, 40)}...');
+        }
         handler.next(options);
+      },
+      onResponse: (response, handler) {
+        // ignore: avoid_print
+        final cookies = response.headers['set-cookie'];
+        if (cookies != null) {
+          print('[API] Set-Cookie: $cookies');
+        }
+        handler.next(response);
       },
       onError: (error, handler) {
         // ignore: avoid_print
