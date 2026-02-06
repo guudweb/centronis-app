@@ -130,7 +130,7 @@ class _ParentChildAttendanceScreenState
                           child: Column(children: [
                             Row(children: [
                               Expanded(
-                                child: Text(report.courseName,
+                                child: Text(report.courseName ?? 'Curso',
                                     style: const TextStyle(
                                         fontWeight: FontWeight.w600)),
                               ),

@@ -46,7 +46,7 @@ class AssignmentsService {
           .toList(),
       pagination: pagination != null
           ? Pagination.fromJson(pagination as Map<String, dynamic>)
-          : const Pagination(total: 0, page: 1, limit: 10, totalPages: 0),
+          : const Pagination(total: 0, page: 1, limit: 10, totalPages: 0, hasNext: false, hasPrev: false),
     );
   }
 

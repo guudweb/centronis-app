@@ -40,11 +40,12 @@ class TenantState {
   }
 }
 
-class TenantNotifier extends StateNotifier<TenantState> {
-  final Dio _dio;
-  final SecureStorageService _storage;
+class TenantNotifier extends Notifier<TenantState> {
+  Dio get _dio => ref.read(dioClientProvider).dio;
+  SecureStorageService get _storage => ref.read(secureStorageProvider);
 
-  TenantNotifier(this._dio, this._storage) : super(const TenantState());
+  @override
+  TenantState build() => const TenantState();
 
   /// Resolve tenant by slug
   Future<bool> resolveTenantBySlug(String slug) async {
@@ -71,16 +72,15 @@ class TenantNotifier extends StateNotifier<TenantState> {
         return false;
       }
     } on DioException catch (e) {
-      String errorMsg;
-      if (e.response?.statusCode == 404) {
-        errorMsg = 'Institución no encontrada';
-      } else if (e.response?.statusCode == 403) {
-        errorMsg = 'Esta institución ha sido desactivada';
-      } else {
-        errorMsg = 'Error al cargar la institución';
-      }
       state = state.copyWith(
-        error: errorMsg,
+        error: '${e.type}: ${e.message ?? "unknown"} [status: ${e.response?.statusCode}]',
+        initialized: true,
+        loading: false,
+      );
+      return false;
+    } catch (e) {
+      state = state.copyWith(
+        error: 'Unexpected: $e',
         initialized: true,
         loading: false,
       );
@@ -106,8 +106,4 @@ class TenantNotifier extends StateNotifier<TenantState> {
 }
 
 final tenantProvider =
-    StateNotifierProvider<TenantNotifier, TenantState>((ref) {
-  final dioClient = ref.watch(dioClientProvider);
-  final storage = ref.watch(secureStorageProvider);
-  return TenantNotifier(dioClient.dio, storage);
-});
+    NotifierProvider<TenantNotifier, TenantState>(TenantNotifier.new);

@@ -6,7 +6,6 @@ import 'package:dio/dio.dart';
 
 import '../../services/courses_service.dart';
 import '../../models/course.dart';
-import '../../models/api_response.dart';
 import '../../widgets/common/loading_widget.dart';
 import '../../widgets/common/empty_state.dart';
 
@@ -21,7 +20,6 @@ class CoursesManagementScreen extends ConsumerStatefulWidget {
 class _CoursesManagementScreenState
     extends ConsumerState<CoursesManagementScreen> {
   List<Course> _courses = [];
-  Pagination? _pagination;
   bool _loading = true;
   String? _error;
 
@@ -43,7 +41,6 @@ class _CoursesManagementScreenState
           );
       setState(() {
         _courses = response.data;
-        _pagination = response.pagination;
         _loading = false;
       });
     } on DioException catch (e) {

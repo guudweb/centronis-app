@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../config/api_config.dart';
@@ -19,6 +20,7 @@ class DioClient {
         connectTimeout: ApiConfig.connectTimeout,
         receiveTimeout: ApiConfig.receiveTimeout,
         headers: {'Content-Type': 'application/json'},
+        extra: kIsWeb ? {'withCredentials': true} : {},
       ),
     );
 

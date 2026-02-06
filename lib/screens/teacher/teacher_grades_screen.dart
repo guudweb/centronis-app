@@ -163,7 +163,7 @@ class _TeacherGradesScreenState extends ConsumerState<TeacherGradesScreen> {
                 padding: const EdgeInsets.all(16),
                 child: Column(children: [
                   DropdownButtonFormField<TeacherCourseSubject>(
-                    value: _selectedCourse,
+                    initialValue: _selectedCourse,
                     decoration: const InputDecoration(
                         labelText: 'Curso y materia',
                         prefixIcon: Icon(LucideIcons.bookOpen)),
@@ -183,7 +183,7 @@ class _TeacherGradesScreenState extends ConsumerState<TeacherGradesScreen> {
                   Row(children: [
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        value: _gradeType,
+                        initialValue: _gradeType,
                         decoration: const InputDecoration(
                             labelText: 'Tipo',
                             prefixIcon: Icon(LucideIcons.tag)),

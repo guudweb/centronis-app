@@ -51,11 +51,12 @@ class AuthState {
 }
 
 // Auth notifier
-class AuthNotifier extends StateNotifier<AuthState> {
-  final AuthService _authService;
-  final SecureStorageService _storage;
+class AuthNotifier extends Notifier<AuthState> {
+  AuthService get _authService => ref.read(authServiceProvider);
+  SecureStorageService get _storage => ref.read(secureStorageProvider);
 
-  AuthNotifier(this._authService, this._storage) : super(const AuthState());
+  @override
+  AuthState build() => const AuthState();
 
   /// Initialize - check if there's an existing session
   Future<void> initialize() async {
@@ -170,8 +171,5 @@ class AuthNotifier extends StateNotifier<AuthState> {
 }
 
 // Provider
-final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  final authService = ref.watch(authServiceProvider);
-  final storage = ref.watch(secureStorageProvider);
-  return AuthNotifier(authService, storage);
-});
+final authProvider =
+    NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);

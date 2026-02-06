@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../providers/auth_provider.dart';
+import '../providers/tenant_provider.dart';
 import '../layouts/admin_layout.dart';
 import '../layouts/teacher_layout.dart';
 import '../layouts/student_layout.dart';
@@ -10,6 +11,7 @@ import '../layouts/parent_layout.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
+import '../screens/auth/tenant_screen.dart';
 // Admin
 import '../screens/admin/admin_dashboard_screen.dart';
 import '../screens/admin/users_screen.dart';
@@ -54,20 +56,27 @@ final _parentShellKey = GlobalKey<NavigatorState>();
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
+  final tenantState = ref.watch(tenantProvider);
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/auth/login',
-    redirect: (context, state) {
-      final isLoggedIn = authState.isAuthenticated;
-      final isAuthRoute = state.matchedLocation.startsWith('/auth');
-      final isInitialized = authState.initialized;
+    initialLocation: '/auth/tenant',
+    redirect: (BuildContext context, GoRouterState state) {
+      final loggedIn = authState.isAuthenticated;
+      final inAuthRoute = state.matchedLocation.startsWith('/auth');
 
-      if (!isInitialized) return null;
+      // Si tenant no resuelto y no está en /auth/tenant, ir a /auth/tenant
+      if (!tenantState.isResolved && state.matchedLocation != '/auth/tenant') {
+        return '/auth/tenant';
+      }
 
-      if (!isLoggedIn && !isAuthRoute) return '/auth/login';
+      // Si tenant resuelto pero no logueado y no en ruta auth, ir a login
+      if (tenantState.isResolved && !loggedIn && !inAuthRoute) {
+        return '/auth/login';
+      }
 
-      if (isLoggedIn && isAuthRoute) {
+      // Si logueado y en ruta auth, ir al dashboard por rol
+      if (loggedIn && inAuthRoute) {
         final notifier = ref.read(authProvider.notifier);
         return notifier.getDashboardRoute();
       }
@@ -87,6 +96,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/auth/forgot-password',
         builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: '/auth/tenant',
+        name: 'tenant',
+        builder: (context, state) => const TenantScreen(),
       ),
 
       // Admin shell

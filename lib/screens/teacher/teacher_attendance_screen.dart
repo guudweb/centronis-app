@@ -175,21 +175,23 @@ class _TeacherAttendanceScreenState
                       ),
                     ),
                     const SizedBox(height: 12),
-                    DropdownButtonFormField<TeacherCourseSubject>(
-                      value: _selectedCourse,
+                    DropdownButtonFormField<String>(
+                      initialValue: _selectedCourse?.courseId.toString() ?? '',
                       decoration: const InputDecoration(
                         labelText: 'Seleccionar curso y materia',
                         prefixIcon: Icon(LucideIcons.bookOpen),
                       ),
                       items: _courses
                           .map((cs) => DropdownMenuItem(
-                              value: cs,
+                              value: cs.courseId.toString(),
                               child: Text(
                                   '${cs.courseName} - ${cs.subjectName}',
                                   overflow: TextOverflow.ellipsis)))
                           .toList(),
                       onChanged: (value) {
-                        setState(() => _selectedCourse = value);
+                        if (value != null) {
+                          setState(() => _selectedCourse = _courses.firstWhere((cs) => cs.courseId.toString() == value));
+                        }
                         _loadStudents();
                       },
                     ),

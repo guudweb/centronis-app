@@ -358,7 +358,7 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen> {
       'female' || 'F' => 'Femenino',
       'other' => 'Otro',
       null => 'N/A',
-      _ => gender!,
+      _ => gender,
     };
   }
 }

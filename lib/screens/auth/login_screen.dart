@@ -6,9 +6,10 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../config/theme.dart';
 import '../../core/utils/validators.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/tenant_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -44,6 +45,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
+    final tenantState = ref.watch(tenantProvider);
+    final tenantName = tenantState.tenantName;
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -57,17 +60,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Logo
-                  Container(
-                    width: 72,
-                    height: 72,
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryColor,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: const Icon(
-                      LucideIcons.school,
-                      color: Colors.white,
-                      size: 36,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.asset(
+                      'assets/images/app_logo.png',
+                      width: 72,
+                      height: 72,
+                      fit: BoxFit.cover,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -78,6 +77,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
+                  if (tenantName.isNotEmpty)
+                    Text(
+                      tenantName,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: AppTheme.primaryColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  if (tenantName.isNotEmpty) const SizedBox(height: 8),
                   Text(
                     'Inicia sesión en tu cuenta',
                     style: theme.textTheme.bodyLarge?.copyWith(
@@ -191,6 +199,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         child: const Text('Crear cuenta'),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: () {
+                      ref.read(tenantProvider.notifier).clearTenant();
+                      context.go('/auth/tenant');
+                    },
+                    child: const Text('Cambiar institución'),
                   ),
                 ],
               ),
