@@ -39,16 +39,18 @@ class _StudentGradesScreenState extends ConsumerState<StudentGradesScreen> {
       }
 
       final results = await Future.wait([
-        ref.read(gradesServiceProvider).getStudentSummary(studentId),
-        ref.read(gradesServiceProvider).getAll(studentId: studentId, limit: 50),
+        ref.read(gradesServiceProvider).getStudentSummary(studentId).then<dynamic>((r) => r).catchError((_) => null),
+        ref.read(gradesServiceProvider).getAll(studentId: studentId, limit: 50).then<dynamic>((r) => r).catchError((_) => null),
       ]);
 
+      if (!mounted) return;
       setState(() {
-        _summary = (results[0] as dynamic).data;
-        _grades = (results[1] as dynamic).data as List<Grade>;
+        if (results[0] != null) _summary = (results[0] as dynamic).data;
+        if (results[1] != null) _grades = (results[1] as dynamic).data as List<Grade>;
         _loading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }

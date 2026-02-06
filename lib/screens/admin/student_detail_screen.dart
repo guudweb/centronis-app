@@ -33,16 +33,27 @@ class _StudentDetailScreenState extends ConsumerState<StudentDetailScreen> {
     setState(() => _loading = true);
     try {
       final results = await Future.wait([
-        ref.read(studentsServiceProvider).getById(widget.studentId),
-        ref.read(enrollmentsServiceProvider).getStudentEnrollments(widget.studentId).catchError((_) => <dynamic>[]),
+        ref.read(studentsServiceProvider).getById(widget.studentId).then<dynamic>((r) => r).catchError((e) {
+          // ignore: avoid_print
+          print('[STUDENT_DETAIL] getById error: $e');
+          return null;
+        }),
+        ref.read(enrollmentsServiceProvider).getStudentEnrollments(widget.studentId).then<dynamic>((r) => r).catchError((e) {
+          // ignore: avoid_print
+          print('[STUDENT_DETAIL] enrollments error: $e');
+          return <dynamic>[];
+        }),
       ]);
       if (!mounted) return;
       setState(() {
-        _student = (results[0] as dynamic).data;
-        _enrollments = results[1] as List<dynamic>;
+        final studentResponse = results[0];
+        _student = studentResponse?.data;
+        _enrollments = results[1] is List ? results[1] as List<dynamic> : [];
         _loading = false;
       });
     } catch (e) {
+      // ignore: avoid_print
+      print('[STUDENT_DETAIL] unexpected error: $e');
       if (!mounted) return;
       setState(() => _loading = false);
     }

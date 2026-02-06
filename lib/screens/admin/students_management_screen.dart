@@ -71,15 +71,6 @@ class _StudentsManagementScreenState
     return Scaffold(
       appBar: AppBar(
         title: const Text('Estudiantes'),
-        actions: [
-          IconButton(
-            icon: const Icon(LucideIcons.userPlus),
-            onPressed: () {
-              // TODO: Navigate to create student
-            },
-            tooltip: 'Nuevo estudiante',
-          ),
-        ],
       ),
       body: Column(
         children: [

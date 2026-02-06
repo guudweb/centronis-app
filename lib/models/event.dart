@@ -23,9 +23,14 @@ class CalendarEvent {
     this.academicPeriodId,
   });
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+  static int? _toIntNullable(dynamic v) =>
+      v == null ? null : (v is int ? v : int.tryParse(v.toString()));
+
   factory CalendarEvent.fromJson(Map<String, dynamic> json) {
     return CalendarEvent(
-      id: json['id'] as int,
+      id: _toInt(json['id']),
       title: json['title'] as String? ?? '',
       description: json['description'] as String?,
       eventType: json['event_type'] as String? ?? 'other',
@@ -34,7 +39,7 @@ class CalendarEvent {
       isRecurring: json['is_recurring'] as bool? ?? false,
       recurrencePattern: json['recurrence_pattern'] as String?,
       affectsAttendance: json['affects_attendance'] as bool? ?? false,
-      academicPeriodId: json['academic_period_id'] as int?,
+      academicPeriodId: _toIntNullable(json['academic_period_id']),
     );
   }
 }

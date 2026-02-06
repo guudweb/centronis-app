@@ -68,9 +68,12 @@ class ParentChild {
 
   String get fullName => '${user.firstName} ${user.lastName}';
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+
   factory ParentChild.fromJson(Map<String, dynamic> json) {
     return ParentChild(
-      id: json['id'] as int,
+      id: _toInt(json['id']),
       studentCode: json['student_code'] as String? ?? '',
       status: json['status'] as String? ?? '',
       relationship: json['relationship'] as String? ?? '',
@@ -120,9 +123,12 @@ class ParentChildEnrollment {
   String get courseName =>
       course?['name'] as String? ?? 'Sin curso asignado';
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+
   factory ParentChildEnrollment.fromJson(Map<String, dynamic> json) {
     return ParentChildEnrollment(
-      id: json['id'] as int,
+      id: _toInt(json['id']),
       course: json['course'] as Map<String, dynamic>?,
       academicPeriod: json['academic_period'] as Map<String, dynamic>?,
     );
@@ -154,9 +160,12 @@ class ParentChildDetail {
 
   String get fullName => '${user.firstName} ${user.lastName}';
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+
   factory ParentChildDetail.fromJson(Map<String, dynamic> json) {
     return ParentChildDetail(
-      id: json['id'] as int,
+      id: _toInt(json['id']),
       studentCode: json['student_code'] as String? ?? '',
       status: json['status'] as String? ?? '',
       admissionDate: json['admission_date'] as String?,
@@ -229,13 +238,16 @@ class ChildAttendanceSummary {
     required this.percentage,
   });
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+
   factory ChildAttendanceSummary.fromJson(Map<String, dynamic> json) {
     return ChildAttendanceSummary(
-      present: json['present'] as int? ?? 0,
-      absent: json['absent'] as int? ?? 0,
-      late: json['late'] as int? ?? 0,
-      excused: json['excused'] as int? ?? 0,
-      total: json['total'] as int? ?? 0,
+      present: _toInt(json['present']),
+      absent: _toInt(json['absent']),
+      late: _toInt(json['late']),
+      excused: _toInt(json['excused']),
+      total: _toInt(json['total']),
       percentage: (json['percentage'] as num?)?.toDouble() ?? 0.0,
     );
   }

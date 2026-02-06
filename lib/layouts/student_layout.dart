@@ -33,12 +33,12 @@ class _StudentLayoutState extends ConsumerState<StudentLayout> {
       label: 'Notas',
     ),
     NavigationDestination(
-      icon: Icon(LucideIcons.clipboardList),
-      label: 'Tareas',
+      icon: Icon(LucideIcons.calendarDays),
+      label: 'Calendario',
     ),
     NavigationDestination(
-      icon: Icon(LucideIcons.menu),
-      label: 'Más',
+      icon: Icon(LucideIcons.user),
+      label: 'Perfil',
     ),
   ];
 
@@ -46,8 +46,8 @@ class _StudentLayoutState extends ConsumerState<StudentLayout> {
     '/student/dashboard',
     '/student/courses',
     '/student/grades',
-    '/student/assignments',
-    null, // "Más" opens a bottom sheet
+    '/student/events',
+    '/student/profile',
   ];
 
   // All items for the drawer (wide layout)
@@ -57,10 +57,10 @@ class _StudentLayoutState extends ConsumerState<StudentLayout> {
     DrawerItem(icon: LucideIcons.fileText, label: 'Notas'),
     DrawerItem(icon: LucideIcons.clipboardList, label: 'Tareas'),
     DrawerItem(icon: LucideIcons.calendar, label: 'Horario'),
-    DrawerItem(icon: LucideIcons.clipboardCheck, label: 'Asistencia'),
     DrawerItem(icon: LucideIcons.megaphone, label: 'Anuncios'),
     DrawerItem(icon: LucideIcons.calendarDays, label: 'Calendario'),
     DrawerItem(icon: LucideIcons.graduationCap, label: 'Boletín'),
+    DrawerItem(icon: LucideIcons.user, label: 'Perfil'),
   ];
 
   static const _allRoutes = [
@@ -69,75 +69,20 @@ class _StudentLayoutState extends ConsumerState<StudentLayout> {
     '/student/grades',
     '/student/assignments',
     '/student/schedule',
-    '/student/attendance',
     '/student/announcements',
     '/student/events',
     '/student/grades/report-card',
+    '/student/profile',
   ];
 
   void _onDestinationSelected(int index) {
-    if (index == 4) {
-      _showMoreSheet();
-      return;
-    }
     setState(() => _selectedIndex = index);
-    context.go(_routes[index]!);
+    context.go(_routes[index]);
   }
 
   void _onDrawerItemTap(int index) {
     setState(() => _selectedIndex = index);
     context.go(_allRoutes[index]);
-  }
-
-  void _showMoreSheet() {
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) {
-        final theme = Theme.of(ctx);
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 8),
-              Container(
-                width: 32,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.onSurfaceVariant
-                      .withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 16),
-              _moreItem(ctx, LucideIcons.calendar, 'Horario',
-                  '/student/schedule'),
-              _moreItem(ctx, LucideIcons.clipboardCheck, 'Asistencia',
-                  '/student/attendance'),
-              _moreItem(ctx, LucideIcons.megaphone, 'Anuncios',
-                  '/student/announcements'),
-              _moreItem(ctx, LucideIcons.calendarDays, 'Calendario',
-                  '/student/events'),
-              _moreItem(ctx, LucideIcons.graduationCap, 'Boletín',
-                  '/student/grades/report-card'),
-              const SizedBox(height: 16),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _moreItem(
-      BuildContext ctx, IconData icon, String label, String route) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(label),
-      trailing: const Icon(LucideIcons.chevronRight, size: 18),
-      onTap: () {
-        Navigator.pop(ctx);
-        context.go(route);
-      },
-    );
   }
 
   @override
@@ -169,7 +114,7 @@ class _StudentLayoutState extends ConsumerState<StudentLayout> {
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex < 4 ? _selectedIndex : 0,
+        selectedIndex: _selectedIndex < 5 ? _selectedIndex : 0,
         onDestinationSelected: _onDestinationSelected,
         destinations: _destinations,
       ),

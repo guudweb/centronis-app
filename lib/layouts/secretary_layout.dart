@@ -7,16 +7,16 @@ import '../providers/auth_provider.dart';
 import '../providers/tenant_provider.dart';
 import '../widgets/common/app_drawer.dart';
 
-class ParentLayout extends ConsumerStatefulWidget {
+class SecretaryLayout extends ConsumerStatefulWidget {
   final Widget child;
 
-  const ParentLayout({super.key, required this.child});
+  const SecretaryLayout({super.key, required this.child});
 
   @override
-  ConsumerState<ParentLayout> createState() => _ParentLayoutState();
+  ConsumerState<SecretaryLayout> createState() => _SecretaryLayoutState();
 }
 
-class _ParentLayoutState extends ConsumerState<ParentLayout> {
+class _SecretaryLayoutState extends ConsumerState<SecretaryLayout> {
   int _selectedIndex = 0;
 
   static const _destinations = [
@@ -25,12 +25,16 @@ class _ParentLayoutState extends ConsumerState<ParentLayout> {
       label: 'Inicio',
     ),
     NavigationDestination(
-      icon: Icon(LucideIcons.users),
-      label: 'Hijos',
+      icon: Icon(LucideIcons.graduationCap),
+      label: 'Estudiantes',
     ),
     NavigationDestination(
-      icon: Icon(LucideIcons.calendarDays),
-      label: 'Calendario',
+      icon: Icon(LucideIcons.bookOpen),
+      label: 'Cursos',
+    ),
+    NavigationDestination(
+      icon: Icon(LucideIcons.calendar),
+      label: 'Horarios',
     ),
     NavigationDestination(
       icon: Icon(LucideIcons.user),
@@ -39,10 +43,11 @@ class _ParentLayoutState extends ConsumerState<ParentLayout> {
   ];
 
   static const _routes = [
-    '/parent/dashboard',
-    '/parent/children',
-    '/parent/events',
-    '/parent/profile',
+    '/secretary/dashboard',
+    '/secretary/students',
+    '/secretary/courses',
+    '/secretary/schedule',
+    '/secretary/profile',
   ];
 
   void _onDestinationSelected(int index) {
@@ -62,16 +67,17 @@ class _ParentLayoutState extends ConsumerState<ParentLayout> {
           children: [
             AppDrawer(
               userName: auth.user?.fullName ?? '',
-              userRole: 'Padre/Madre',
+              userRole: 'Secretaria',
               institutionName: tenant.tenantName,
               logoUrl: tenant.tenantLogo,
               selectedIndex: _selectedIndex,
               items: const [
                 DrawerItem(
                     icon: LucideIcons.layoutDashboard, label: 'Inicio'),
-                DrawerItem(icon: LucideIcons.users, label: 'Hijos'),
                 DrawerItem(
-                    icon: LucideIcons.calendarDays, label: 'Calendario'),
+                    icon: LucideIcons.graduationCap, label: 'Estudiantes'),
+                DrawerItem(icon: LucideIcons.bookOpen, label: 'Cursos'),
+                DrawerItem(icon: LucideIcons.calendar, label: 'Horarios'),
                 DrawerItem(icon: LucideIcons.user, label: 'Perfil'),
               ],
               onItemTap: _onDestinationSelected,

@@ -186,12 +186,16 @@ class AuthNotifier extends Notifier<AuthState> {
 
   /// Get the dashboard route for the current user role
   String getDashboardRoute() {
-    if (state.isAdmin || state.isDirector) return '/admin/dashboard';
+    if (state.isSuperAdmin || state.isAdmin) return '/admin/dashboard';
+    if (state.isDirector) return '/director/dashboard';
     if (state.isSecretary) return '/secretary/dashboard';
     if (state.isTeacher) return '/teacher/dashboard';
     if (state.isStudent) return '/student/dashboard';
     if (state.isParent) return '/parent/dashboard';
-    return '/';
+    // Fallback to admin dashboard for unknown roles to avoid route crash
+    // ignore: avoid_print
+    print('[AUTH] Unknown role "${state.userRole}", falling back to admin dashboard');
+    return '/admin/dashboard';
   }
 }
 

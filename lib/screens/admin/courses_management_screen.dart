@@ -56,15 +56,6 @@ class _CoursesManagementScreenState
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cursos'),
-        actions: [
-          IconButton(
-            icon: const Icon(LucideIcons.plus),
-            onPressed: () {
-              // TODO: Navigate to create course
-            },
-            tooltip: 'Nuevo curso',
-          ),
-        ],
       ),
       body: _loading
           ? const LoadingWidget(message: 'Cargando cursos...')

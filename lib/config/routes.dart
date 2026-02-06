@@ -8,10 +8,12 @@ import '../layouts/admin_layout.dart';
 import '../layouts/teacher_layout.dart';
 import '../layouts/student_layout.dart';
 import '../layouts/parent_layout.dart';
+import '../layouts/secretary_layout.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
 import '../screens/auth/tenant_screen.dart';
+import '../screens/common/profile_screen.dart';
 // Admin
 import '../screens/admin/admin_dashboard_screen.dart';
 import '../screens/admin/users_screen.dart';
@@ -47,12 +49,16 @@ import '../screens/parent/parent_child_attendance_screen.dart';
 import '../screens/parent/parent_child_assignments_screen.dart';
 import '../screens/parent/parent_child_report_card_screen.dart';
 import '../screens/parent/parent_events_screen.dart';
+// Secretary
+import '../screens/secretary/secretary_dashboard_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _adminShellKey = GlobalKey<NavigatorState>();
 final _teacherShellKey = GlobalKey<NavigatorState>();
 final _studentShellKey = GlobalKey<NavigatorState>();
 final _parentShellKey = GlobalKey<NavigatorState>();
+final _secretaryShellKey = GlobalKey<NavigatorState>();
+final _directorShellKey = GlobalKey<NavigatorState>();
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
@@ -150,6 +156,90 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
 
+      // Director shell (same screens as admin)
+      ShellRoute(
+        navigatorKey: _directorShellKey,
+        builder: (context, state, child) => AdminLayout(child: child),
+        routes: [
+          GoRoute(
+            path: '/director/dashboard',
+            builder: (context, state) => const AdminDashboardScreen(),
+          ),
+          GoRoute(
+            path: '/director/users',
+            builder: (context, state) => const UsersScreen(),
+          ),
+          GoRoute(
+            path: '/director/students',
+            builder: (context, state) => const StudentsManagementScreen(),
+          ),
+          GoRoute(
+            path: '/director/students/:id',
+            builder: (context, state) {
+              final id = int.parse(state.pathParameters['id']!);
+              return StudentDetailScreen(studentId: id);
+            },
+          ),
+          GoRoute(
+            path: '/director/courses',
+            builder: (context, state) => const CoursesManagementScreen(),
+          ),
+          GoRoute(
+            path: '/director/courses/:id',
+            builder: (context, state) {
+              final id = int.parse(state.pathParameters['id']!);
+              return CourseDetailScreen(courseId: id);
+            },
+          ),
+          GoRoute(
+            path: '/director/settings',
+            builder: (context, state) => const SettingsScreen(),
+          ),
+        ],
+      ),
+
+      // Secretary shell
+      ShellRoute(
+        navigatorKey: _secretaryShellKey,
+        builder: (context, state, child) => SecretaryLayout(child: child),
+        routes: [
+          GoRoute(
+            path: '/secretary/dashboard',
+            builder: (context, state) => const SecretaryDashboardScreen(),
+          ),
+          GoRoute(
+            path: '/secretary/students',
+            builder: (context, state) => const StudentsManagementScreen(),
+          ),
+          GoRoute(
+            path: '/secretary/students/:id',
+            builder: (context, state) {
+              final id = int.parse(state.pathParameters['id']!);
+              return StudentDetailScreen(studentId: id);
+            },
+          ),
+          GoRoute(
+            path: '/secretary/courses',
+            builder: (context, state) => const CoursesManagementScreen(),
+          ),
+          GoRoute(
+            path: '/secretary/courses/:id',
+            builder: (context, state) {
+              final id = int.parse(state.pathParameters['id']!);
+              return CourseDetailScreen(courseId: id);
+            },
+          ),
+          GoRoute(
+            path: '/secretary/schedule',
+            builder: (context, state) => const StudentScheduleScreen(),
+          ),
+          GoRoute(
+            path: '/secretary/profile',
+            builder: (context, state) => const ProfileScreen(),
+          ),
+        ],
+      ),
+
       // Teacher shell
       ShellRoute(
         navigatorKey: _teacherShellKey,
@@ -236,6 +326,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/student/events',
             builder: (context, state) => const StudentEventsScreen(),
           ),
+          GoRoute(
+            path: '/student/profile',
+            builder: (context, state) => const ProfileScreen(),
+          ),
         ],
       ),
 
@@ -290,6 +384,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/parent/events',
             builder: (context, state) => const ParentEventsScreen(),
+          ),
+          GoRoute(
+            path: '/parent/profile',
+            builder: (context, state) => const ProfileScreen(),
           ),
         ],
       ),
