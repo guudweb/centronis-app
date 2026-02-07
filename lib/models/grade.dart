@@ -51,27 +51,32 @@ class Grade {
     this.subject,
   });
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+  static int? _toIntNullable(dynamic v) =>
+      v == null ? null : (v is int ? v : int.tryParse(v.toString()));
+
   factory Grade.fromJson(Map<String, dynamic> json) {
     return Grade(
-      id: json['id'] as int,
-      studentId: json['student_id'] as int,
-      courseId: json['course_id'] as int,
-      subjectId: json['subject_id'] as int?,
-      academicPeriodId: json['academic_period_id'] as int,
-      gradeType: json['grade_type'] as String,
-      assignmentId: json['assignment_id'] as int?,
-      gradeValue: (json['grade_value'] as num).toDouble(),
+      id: _toInt(json['id']),
+      studentId: _toInt(json['student_id']),
+      courseId: _toInt(json['course_id']),
+      subjectId: _toIntNullable(json['subject_id']),
+      academicPeriodId: _toInt(json['academic_period_id']),
+      gradeType: json['grade_type'] as String? ?? '',
+      assignmentId: _toIntNullable(json['assignment_id']),
+      gradeValue: (json['grade_value'] as num?)?.toDouble() ?? 0,
       maxGrade: (json['max_grade'] as num?)?.toDouble() ?? 100.0,
       maxValue: (json['max_value'] as num?)?.toDouble(),
       weight: (json['weight'] as num?)?.toDouble() ?? 1.0,
       percentage: (json['percentage'] as num?)?.toDouble(),
       letterGrade: json['letter_grade'] as String?,
-      gradeScaleId: json['grade_scale_id'] as int?,
+      gradeScaleId: _toIntNullable(json['grade_scale_id']),
       comments: json['comments'] as String?,
       isFinal: json['is_final'] as bool? ?? false,
-      gradedBy: json['graded_by'] as int,
-      gradedDate: json['graded_date'] as String,
-      institutionId: json['institution_id'] as int,
+      gradedBy: _toInt(json['graded_by']),
+      gradedDate: json['graded_date'] as String? ?? '',
+      institutionId: _toInt(json['institution_id']),
       createdAt: json['created_at'] as String? ?? '',
       updatedAt: json['updated_at'] as String? ?? '',
       student: json['student'] != null
@@ -119,8 +124,9 @@ class GradeStudentRef {
   String get fullName => '$firstName $lastName';
 
   factory GradeStudentRef.fromJson(Map<String, dynamic> json) {
+    final id = json['id'];
     return GradeStudentRef(
-      id: json['id'] as int,
+      id: id is int ? id : int.tryParse(id?.toString() ?? '') ?? 0,
       firstName: json['first_name'] as String? ?? '',
       lastName: json['last_name'] as String? ?? '',
       studentCode: json['student_code'] as String? ?? '',
@@ -141,10 +147,11 @@ class GradeCourseRef {
   });
 
   factory GradeCourseRef.fromJson(Map<String, dynamic> json) {
+    final id = json['id'];
     return GradeCourseRef(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      code: json['code'] as String,
+      id: id is int ? id : int.tryParse(id?.toString() ?? '') ?? 0,
+      name: json['name'] as String? ?? '',
+      code: json['code'] as String? ?? '',
     );
   }
 }
@@ -161,10 +168,11 @@ class GradeSubjectRef {
   });
 
   factory GradeSubjectRef.fromJson(Map<String, dynamic> json) {
+    final id = json['id'];
     return GradeSubjectRef(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      code: json['code'] as String,
+      id: id is int ? id : int.tryParse(id?.toString() ?? '') ?? 0,
+      name: json['name'] as String? ?? '',
+      code: json['code'] as String? ?? '',
     );
   }
 }
@@ -182,11 +190,15 @@ class GradeSummary {
 
   factory GradeSummary.fromJson(Map<String, dynamic> json) {
     return GradeSummary(
-      student:
-          GradeStudentRef.fromJson(json['student'] as Map<String, dynamic>),
-      courses: (json['courses'] as List<dynamic>)
-          .map((e) => CourseSummary.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      student: json['student'] is Map<String, dynamic>
+          ? GradeStudentRef.fromJson(json['student'] as Map<String, dynamic>)
+          : const GradeStudentRef(
+              id: 0, firstName: '', lastName: '', studentCode: ''),
+      courses: json['courses'] is List
+          ? (json['courses'] as List<dynamic>)
+              .map((e) => CourseSummary.fromJson(e as Map<String, dynamic>))
+              .toList()
+          : [],
       gpa: (json['gpa'] as num?)?.toDouble() ?? 0.0,
     );
   }
@@ -206,10 +218,11 @@ class CourseSummary {
   });
 
   factory CourseSummary.fromJson(Map<String, dynamic> json) {
+    final cid = json['course_id'];
     return CourseSummary(
-      courseId: json['course_id'] as int,
-      courseName: json['course_name'] as String,
-      courseCode: json['course_code'] as String,
+      courseId: cid is int ? cid : int.tryParse(cid?.toString() ?? '') ?? 0,
+      courseName: json['course_name'] as String? ?? '',
+      courseCode: json['course_code'] as String? ?? '',
       overallAverage: (json['overall_average'] as num?)?.toDouble() ?? 0.0,
     );
   }

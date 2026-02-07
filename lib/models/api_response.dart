@@ -16,8 +16,8 @@ class ApiResponse<T> {
     T Function(dynamic) fromJsonT,
   ) {
     return ApiResponse(
-      success: json['success'] as bool,
-      message: json['message'] as String? ?? '',
+      success: json['success'] == true,
+      message: json['message'] is String ? json['message'] as String : '',
       data: json['data'] != null ? fromJsonT(json['data']) : null,
       errors: (json['errors'] as List<dynamic>?)?.cast<String>(),
     );
@@ -44,8 +44,8 @@ class PaginatedResponse<T> {
     T Function(Map<String, dynamic>) fromJsonT,
   ) {
     return PaginatedResponse(
-      success: json['success'] as bool,
-      message: json['message'] as String? ?? '',
+      success: json['success'] == true,
+      message: json['message'] is String ? json['message'] as String : '',
       data: (json['data'] as List<dynamic>)
           .map((e) => fromJsonT(e as Map<String, dynamic>))
           .toList(),

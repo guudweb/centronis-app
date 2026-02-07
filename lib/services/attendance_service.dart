@@ -69,9 +69,16 @@ class AttendanceService {
     );
     return ApiResponse.fromJson(
       response.data as Map<String, dynamic>,
-      (data) => (data as List<dynamic>)
-          .map((e) => Attendance.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      (data) {
+        final list = data is List
+            ? data
+            : (data is Map<String, dynamic> && data['data'] is List)
+                ? data['data'] as List
+                : <dynamic>[];
+        return list
+            .map((e) => Attendance.fromJson(e as Map<String, dynamic>))
+            .toList();
+      },
     );
   }
 
@@ -113,9 +120,16 @@ class AttendanceService {
     });
     return ApiResponse.fromJson(
       response.data as Map<String, dynamic>,
-      (data) => (data as List<dynamic>)
-          .map((e) => AttendanceReport.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      (data) {
+        final list = data is List
+            ? data
+            : (data is Map<String, dynamic> && data['data'] is List)
+                ? data['data'] as List
+                : <dynamic>[];
+        return list
+            .map((e) => AttendanceReport.fromJson(e as Map<String, dynamic>))
+            .toList();
+      },
     );
   }
 }

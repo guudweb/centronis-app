@@ -48,6 +48,7 @@ import '../screens/parent/parent_child_grades_screen.dart';
 import '../screens/parent/parent_child_attendance_screen.dart';
 import '../screens/parent/parent_child_assignments_screen.dart';
 import '../screens/parent/parent_child_report_card_screen.dart';
+import '../screens/parent/parent_child_charges_screen.dart';
 import '../screens/parent/parent_events_screen.dart';
 // Secretary
 import '../screens/secretary/secretary_dashboard_screen.dart';
@@ -379,6 +380,13 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) {
               final id = int.parse(state.pathParameters['id']!);
               return ParentChildReportCardScreen(studentId: id);
+            },
+          ),
+          GoRoute(
+            path: '/parent/children/:id/charges',
+            builder: (context, state) {
+              final id = int.parse(state.pathParameters['id']!);
+              return ParentChildChargesScreen(studentId: id);
             },
           ),
           GoRoute(

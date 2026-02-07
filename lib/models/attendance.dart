@@ -31,16 +31,21 @@ class Attendance {
 
   String? get courseName => course?.name;
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+  static int? _toIntNullable(dynamic v) =>
+      v == null ? null : (v is int ? v : int.tryParse(v.toString()));
+
   factory Attendance.fromJson(Map<String, dynamic> json) {
     return Attendance(
-      id: json['id'] as int,
-      studentId: json['student_id'] as int,
-      courseId: json['course_id'] as int,
-      subjectId: json['subject_id'] as int?,
-      date: json['date'] as String,
-      status: json['status'] as String,
+      id: _toInt(json['id']),
+      studentId: _toInt(json['student_id']),
+      courseId: _toInt(json['course_id']),
+      subjectId: _toIntNullable(json['subject_id']),
+      date: json['date'] as String? ?? '',
+      status: json['status'] as String? ?? 'present',
       notes: json['notes'] as String?,
-      markedBy: json['marked_by'] as int?,
+      markedBy: _toIntNullable(json['marked_by']),
       createdAt: json['created_at'] as String? ?? '',
       updatedAt: json['updated_at'] as String? ?? '',
       student: json['student'] != null
@@ -78,8 +83,9 @@ class AttendanceStudentRef {
 
   factory AttendanceStudentRef.fromJson(Map<String, dynamic> json) {
     final user = json['user'] as Map<String, dynamic>?;
+    final id = json['id'];
     return AttendanceStudentRef(
-      id: json['id'] as int,
+      id: id is int ? id : int.tryParse(id?.toString() ?? '') ?? 0,
       studentCode: json['student_code'] as String? ?? '',
       firstName: user?['first_name'] as String? ?? '',
       lastName: user?['last_name'] as String? ?? '',
@@ -100,10 +106,11 @@ class AttendanceCourseRef {
   });
 
   factory AttendanceCourseRef.fromJson(Map<String, dynamic> json) {
+    final id = json['id'];
     return AttendanceCourseRef(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      code: json['code'] as String,
+      id: id is int ? id : int.tryParse(id?.toString() ?? '') ?? 0,
+      name: json['name'] as String? ?? '',
+      code: json['code'] as String? ?? '',
     );
   }
 }
@@ -120,10 +127,11 @@ class AttendanceSubjectRef {
   });
 
   factory AttendanceSubjectRef.fromJson(Map<String, dynamic> json) {
+    final id = json['id'];
     return AttendanceSubjectRef(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      code: json['code'] as String,
+      id: id is int ? id : int.tryParse(id?.toString() ?? '') ?? 0,
+      name: json['name'] as String? ?? '',
+      code: json['code'] as String? ?? '',
     );
   }
 }
@@ -155,12 +163,17 @@ class AttendanceReport {
     required this.attendanceRate,
   });
 
+  static int _toInt(dynamic v, [int fallback = 0]) =>
+      v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
+  static int? _toIntNullable(dynamic v) =>
+      v == null ? null : (v is int ? v : int.tryParse(v.toString()));
+
   factory AttendanceReport.fromJson(Map<String, dynamic> json) {
     return AttendanceReport(
-      studentId: json['student_id'] as int,
+      studentId: _toInt(json['student_id']),
       studentCode: json['student_code'] as String? ?? '',
       studentName: json['student_name'] as String? ?? '',
-      courseId: json['course_id'] as int?,
+      courseId: _toIntNullable(json['course_id']),
       courseName: json['course_name'] as String?,
       totalClasses: json['total_classes'] as int? ?? 0,
       presentCount: json['present_count'] as int? ?? 0,

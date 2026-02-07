@@ -51,28 +51,32 @@ class Student {
   static int _toInt(dynamic v, [int fallback = 0]) =>
       v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
 
+  /// Safely convert dynamic to String? (handles Maps, ints, etc.)
+  static String? _toStr(dynamic v) =>
+      v == null ? null : (v is String ? v : null);
+
   factory Student.fromJson(Map<String, dynamic> json) {
     return Student(
       id: _toInt(json['id']),
       userId: _toInt(json['user_id']),
-      studentCode: json['student_code'] as String? ?? '',
-      admissionDate: json['admission_date'] as String? ?? '',
-      guardian1Name: json['guardian1_name'] as String?,
-      guardian1Phone: json['guardian1_phone'] as String?,
-      guardian1Email: json['guardian1_email'] as String?,
-      guardian1Relationship: json['guardian1_relationship'] as String?,
-      guardian2Name: json['guardian2_name'] as String?,
-      guardian2Phone: json['guardian2_phone'] as String?,
-      guardian2Email: json['guardian2_email'] as String?,
-      guardian2Relationship: json['guardian2_relationship'] as String?,
-      medicalInfo: json['medical_info'] as String?,
-      emergencyContact: json['emergency_contact'] as String?,
-      emergencyPhone: json['emergency_phone'] as String?,
-      notes: json['notes'] as String?,
-      status: json['status'] as String? ?? 'active',
-      createdAt: json['created_at'] as String? ?? '',
-      updatedAt: json['updated_at'] as String? ?? '',
-      user: json['user'] != null
+      studentCode: _toStr(json['student_code']) ?? '',
+      admissionDate: _toStr(json['admission_date']) ?? '',
+      guardian1Name: _toStr(json['guardian1_name']),
+      guardian1Phone: _toStr(json['guardian1_phone']),
+      guardian1Email: _toStr(json['guardian1_email']),
+      guardian1Relationship: _toStr(json['guardian1_relationship']),
+      guardian2Name: _toStr(json['guardian2_name']),
+      guardian2Phone: _toStr(json['guardian2_phone']),
+      guardian2Email: _toStr(json['guardian2_email']),
+      guardian2Relationship: _toStr(json['guardian2_relationship']),
+      medicalInfo: _toStr(json['medical_info']),
+      emergencyContact: _toStr(json['emergency_contact']),
+      emergencyPhone: _toStr(json['emergency_phone']),
+      notes: _toStr(json['notes']),
+      status: _toStr(json['status']) ?? 'active',
+      createdAt: _toStr(json['created_at']) ?? '',
+      updatedAt: _toStr(json['updated_at']) ?? '',
+      user: json['user'] != null && json['user'] is Map<String, dynamic>
           ? StudentUser.fromJson(json['user'] as Map<String, dynamic>)
           : null,
       activeEnrollments: json['active_enrollments'] != null ? _toInt(json['active_enrollments']) : null,
@@ -138,19 +142,22 @@ class StudentUser {
 
   String get fullName => '$firstName $lastName';
 
+  static String? _toStr(dynamic v) =>
+      v == null ? null : (v is String ? v : null);
+
   factory StudentUser.fromJson(Map<String, dynamic> json) {
     return StudentUser(
       id: json['id'] is int ? json['id'] as int : int.tryParse(json['id']?.toString() ?? '') ?? 0,
-      email: json['email'] as String? ?? '',
-      firstName: json['first_name'] as String? ?? '',
-      lastName: json['last_name'] as String? ?? '',
-      documentType: json['document_type'] as String?,
-      documentNumber: json['document_number'] as String?,
-      phone: json['phone'] as String?,
-      address: json['address'] as String?,
-      birthDate: json['birth_date'] as String?,
-      gender: json['gender'] as String?,
-      profileImageUrl: json['profile_image_url'] as String?,
+      email: _toStr(json['email']) ?? '',
+      firstName: _toStr(json['first_name']) ?? '',
+      lastName: _toStr(json['last_name']) ?? '',
+      documentType: _toStr(json['document_type']),
+      documentNumber: _toStr(json['document_number']),
+      phone: _toStr(json['phone']),
+      address: _toStr(json['address']),
+      birthDate: _toStr(json['birth_date']),
+      gender: _toStr(json['gender']),
+      profileImageUrl: _toStr(json['profile_image_url']),
       active: json['active'] as bool? ?? true,
     );
   }

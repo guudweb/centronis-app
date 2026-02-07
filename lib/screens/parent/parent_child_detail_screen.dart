@@ -216,6 +216,15 @@ class _ParentChildDetailScreenState
                         () => context.push(
                             '/parent/children/${widget.studentId}/report-card'),
                       ),
+                      _navCard(
+                        theme,
+                        LucideIcons.receipt,
+                        'Cargos y Pagos',
+                        'Estado de cuenta y pagos',
+                        AppTheme.errorColor,
+                        () => context.push(
+                            '/parent/children/${widget.studentId}/charges'),
+                      ),
                     ],
                   ),
                 ),
