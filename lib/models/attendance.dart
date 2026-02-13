@@ -220,6 +220,6 @@ class BulkAttendanceEntry {
   Map<String, dynamic> toJson() => {
         'student_id': studentId,
         'status': status,
-        'notes': notes,
+        if (notes != null) 'notes': notes,
       };
 }
