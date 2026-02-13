@@ -38,7 +38,7 @@ class TeachersService {
     int? academicPeriodId,
   }) async {
     final response = await _dio.get(
-      '/course-subject-teachers/teachers/$teacherId/course-subjects',
+      '/teachers/$teacherId/course-subjects',
       queryParameters: {
         if (academicPeriodId != null) 'academicPeriodId': academicPeriodId,
       },
