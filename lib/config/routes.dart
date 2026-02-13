@@ -283,6 +283,18 @@ final routerProvider = Provider<GoRouter>((ref) {
               return TeacherAssignmentDetailScreen(assignmentId: id);
             },
           ),
+          GoRoute(
+            path: '/teacher/announcements',
+            builder: (context, state) => const StudentAnnouncementsScreen(),
+          ),
+          GoRoute(
+            path: '/teacher/events',
+            builder: (context, state) => const StudentEventsScreen(),
+          ),
+          GoRoute(
+            path: '/teacher/profile',
+            builder: (context, state) => const ProfileScreen(),
+          ),
         ],
       ),
 

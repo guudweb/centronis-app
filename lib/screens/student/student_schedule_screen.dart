@@ -52,7 +52,7 @@ class _StudentScheduleScreenState
       // Get student's enrollments first (accessible to students)
       final enrollments = await ref
           .read(enrollmentsServiceProvider)
-          .getMyEnrollments(studentId: studentId, status: 'active');
+          .getMyEnrollments(studentId: studentId, status: 'enrolled');
 
       final allSchedule = <int, List<ScheduleEntry>>{};
 

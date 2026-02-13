@@ -95,7 +95,7 @@ class _StudentDashboardScreenState
     try {
       final enrollments = await ref
           .read(enrollmentsServiceProvider)
-          .getMyEnrollments(studentId: studentId, status: 'active');
+          .getMyEnrollments(studentId: studentId, status: 'enrolled');
 
       final todayEntries = <ScheduleEntry>[];
       final today = DateTime.now().weekday;
