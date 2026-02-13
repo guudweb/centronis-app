@@ -222,57 +222,36 @@ class _TeacherAttendanceScreenState
                                         'present';
                                 return Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(vertical: 8),
-                                  child: Row(
+                                      const EdgeInsets.symmetric(vertical: 6),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      CircleAvatar(
-                                        radius: 18,
-                                        child: Text(
-                                            student.fullName.isNotEmpty
-                                                ? student.fullName[0]
-                                                    .toUpperCase()
-                                                : '?',
-                                            style:
-                                                const TextStyle(fontSize: 14)),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(student.fullName,
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 14),
-                                                maxLines: 1,
-                                                overflow:
-                                                    TextOverflow.ellipsis),
-                                            Text(student.studentCode,
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: theme.colorScheme
-                                                        .onSurfaceVariant)),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
+                                      Text(student.fullName,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 14)),
+                                      const SizedBox(height: 6),
                                       SegmentedButton<String>(
                                         segments: const [
                                           ButtonSegment(
                                               value: 'present',
+                                              label: Text('P', style: TextStyle(fontSize: 12)),
                                               icon: Icon(LucideIcons.check,
                                                   size: 14)),
                                           ButtonSegment(
                                               value: 'absent',
+                                              label: Text('A', style: TextStyle(fontSize: 12)),
                                               icon: Icon(LucideIcons.x,
                                                   size: 14)),
                                           ButtonSegment(
                                               value: 'late',
+                                              label: Text('T', style: TextStyle(fontSize: 12)),
                                               icon: Icon(LucideIcons.clock,
                                                   size: 14)),
                                           ButtonSegment(
                                               value: 'excused',
+                                              label: Text('E', style: TextStyle(fontSize: 12)),
                                               icon: Icon(
                                                   LucideIcons.shieldCheck,
                                                   size: 14)),
