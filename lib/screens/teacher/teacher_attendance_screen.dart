@@ -220,51 +220,81 @@ class _TeacherAttendanceScreenState
                                 final status =
                                     _attendanceStatus[student.studentId] ??
                                         'present';
-                                return ListTile(
-                                  leading: CircleAvatar(
-                                    radius: 18,
-                                    child: Text(
-                                        student.fullName.isNotEmpty
-                                            ? student.fullName[0].toUpperCase()
-                                            : '?',
-                                        style: const TextStyle(fontSize: 14)),
-                                  ),
-                                  title: Text(student.fullName,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w500)),
-                                  subtitle: Text(student.studentCode),
-                                  trailing: SegmentedButton<String>(
-                                    segments: const [
-                                      ButtonSegment(
-                                          value: 'present',
-                                          icon: Icon(LucideIcons.check,
-                                              size: 14)),
-                                      ButtonSegment(
-                                          value: 'absent',
-                                          icon:
-                                              Icon(LucideIcons.x, size: 14)),
-                                      ButtonSegment(
-                                          value: 'late',
-                                          icon: Icon(LucideIcons.clock,
-                                              size: 14)),
-                                      ButtonSegment(
-                                          value: 'excused',
-                                          icon: Icon(LucideIcons.shieldCheck,
-                                              size: 14)),
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 18,
+                                        child: Text(
+                                            student.fullName.isNotEmpty
+                                                ? student.fullName[0]
+                                                    .toUpperCase()
+                                                : '?',
+                                            style:
+                                                const TextStyle(fontSize: 14)),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(student.fullName,
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 14),
+                                                maxLines: 1,
+                                                overflow:
+                                                    TextOverflow.ellipsis),
+                                            Text(student.studentCode,
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: theme.colorScheme
+                                                        .onSurfaceVariant)),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      SegmentedButton<String>(
+                                        segments: const [
+                                          ButtonSegment(
+                                              value: 'present',
+                                              icon: Icon(LucideIcons.check,
+                                                  size: 14)),
+                                          ButtonSegment(
+                                              value: 'absent',
+                                              icon: Icon(LucideIcons.x,
+                                                  size: 14)),
+                                          ButtonSegment(
+                                              value: 'late',
+                                              icon: Icon(LucideIcons.clock,
+                                                  size: 14)),
+                                          ButtonSegment(
+                                              value: 'excused',
+                                              icon: Icon(
+                                                  LucideIcons.shieldCheck,
+                                                  size: 14)),
+                                        ],
+                                        selected: {status},
+                                        onSelectionChanged: (sel) =>
+                                            setState(() =>
+                                                _attendanceStatus[
+                                                        student.studentId] =
+                                                    sel.first),
+                                        showSelectedIcon: false,
+                                        style: ButtonStyle(
+                                          visualDensity: VisualDensity.compact,
+                                          tapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          padding:
+                                              const WidgetStatePropertyAll(
+                                                  EdgeInsets.symmetric(
+                                                      horizontal: 4)),
+                                        ),
+                                      ),
                                     ],
-                                    selected: {status},
-                                    onSelectionChanged: (sel) => setState(() =>
-                                        _attendanceStatus[student.studentId] =
-                                            sel.first),
-                                    showSelectedIcon: false,
-                                    style: ButtonStyle(
-                                      visualDensity: VisualDensity.compact,
-                                      tapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      padding: WidgetStatePropertyAll(
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 6)),
-                                    ),
                                   ),
                                 );
                               },
