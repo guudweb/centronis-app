@@ -176,21 +176,27 @@ class _TeacherAttendanceScreenState
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
-                      initialValue: _selectedCourse?.courseId.toString(),
+                      initialValue: _selectedCourse != null
+                          ? '${_selectedCourse!.courseId}_${_selectedCourse!.subjectId}'
+                          : null,
                       decoration: const InputDecoration(
                         labelText: 'Seleccionar curso y materia',
                         prefixIcon: Icon(LucideIcons.bookOpen),
                       ),
                       items: _courses
                           .map((cs) => DropdownMenuItem(
-                              value: cs.courseId.toString(),
+                              value: '${cs.courseId}_${cs.subjectId}',
                               child: Text(
                                   '${cs.courseName} - ${cs.subjectName}',
                                   overflow: TextOverflow.ellipsis)))
                           .toList(),
                       onChanged: (value) {
                         if (value != null) {
-                          setState(() => _selectedCourse = _courses.firstWhere((cs) => cs.courseId.toString() == value));
+                          final parts = value.split('_');
+                          final cId = int.tryParse(parts[0]);
+                          final sId = int.tryParse(parts[1]);
+                          setState(() => _selectedCourse = _courses.firstWhere(
+                              (cs) => cs.courseId == cId && cs.subjectId == sId));
                         }
                         _loadStudents();
                       },
