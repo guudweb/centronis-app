@@ -176,7 +176,7 @@ class _TeacherAttendanceScreenState
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
-                      initialValue: _selectedCourse?.courseId.toString() ?? '',
+                      initialValue: _selectedCourse?.courseId.toString(),
                       decoration: const InputDecoration(
                         labelText: 'Seleccionar curso y materia',
                         prefixIcon: Icon(LucideIcons.bookOpen),

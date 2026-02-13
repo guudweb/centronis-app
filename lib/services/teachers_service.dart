@@ -98,13 +98,16 @@ class TeacherCourseSubject {
       v is int ? v : int.tryParse(v?.toString() ?? '') ?? fallback;
 
   factory TeacherCourseSubject.fromJson(Map<String, dynamic> json) {
+    // API returns nested course/subject objects
+    final course = json['course'] as Map<String, dynamic>?;
+    final subject = json['subject'] as Map<String, dynamic>?;
     return TeacherCourseSubject(
-      courseId: _toInt(json['course_id']),
-      courseName: json['course_name'] as String? ?? '',
-      subjectId: _toInt(json['subject_id']),
-      subjectName: json['subject_name'] as String? ?? '',
+      courseId: _toInt(course?['id'] ?? json['course_id']),
+      courseName: course?['name'] as String? ?? json['course_name'] as String? ?? '',
+      subjectId: _toInt(subject?['id'] ?? json['subject_id']),
+      subjectName: subject?['name'] as String? ?? json['subject_name'] as String? ?? '',
       isPrimary: json['is_primary'] as bool? ?? false,
-      assignedAt: json['assigned_at'] as String?,
+      assignedAt: json['assigned_at'] as String? ?? json['created_at'] as String?,
     );
   }
 }
