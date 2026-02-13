@@ -7,7 +7,9 @@ import '../../config/theme.dart';
 import '../../providers/auth_provider.dart' show authProvider;
 import '../../services/announcements_service.dart';
 import '../../services/assignments_service.dart';
+import '../../services/enrollments_service.dart';
 import '../../services/schedule_service.dart';
+import '../../services/teachers_service.dart' show ScheduleEntry;
 import '../../services/events_service.dart';
 import '../../core/utils/date_utils.dart';
 import '../../widgets/common/loading_widget.dart';
@@ -37,6 +39,9 @@ class _StudentDashboardScreenState
   Future<void> _loadData() async {
     setState(() => _loading = true);
     try {
+      final auth = ref.read(authProvider);
+      final studentId = auth.user?.studentId;
+
       final results = await Future.wait([
         ref
             .read(announcementsServiceProvider)
@@ -48,11 +53,8 @@ class _StudentDashboardScreenState
             .getAll(page: 1, limit: 5)
             .then<dynamic>((r) => r)
             .catchError((_) => null),
-        ref
-            .read(scheduleServiceProvider)
-            .getAll(dayOfWeek: DateTime.now().weekday)
-            .then<dynamic>((r) => r)
-            .catchError((_) => null),
+        // Load today's schedule via enrollments (GET /schedules is admin-only)
+        _loadTodaySchedule(studentId),
         ref
             .read(eventsServiceProvider)
             .getAll(
@@ -73,7 +75,7 @@ class _StudentDashboardScreenState
           _assignments = (results[1] as dynamic).data ?? [];
         }
         if (results[2] != null) {
-          _schedule = results[2] is List ? results[2] as List<dynamic> : [];
+          _schedule = results[2] as List<dynamic>;
         }
         if (results[3] != null) {
           _events = results[3] is List ? results[3] as List<dynamic> : [];
@@ -82,9 +84,42 @@ class _StudentDashboardScreenState
       });
     } catch (e) {
       if (!mounted) return;
-      // ignore: avoid_print
-      print('[STUDENT_DASH] error: $e');
       setState(() => _loading = false);
+    }
+  }
+
+  /// Load today's schedule using enrollment-based approach
+  /// (GET /schedules/course/:id is accessible to students)
+  Future<List<ScheduleEntry>> _loadTodaySchedule(int? studentId) async {
+    if (studentId == null) return [];
+    try {
+      final enrollments = await ref
+          .read(enrollmentsServiceProvider)
+          .getMyEnrollments(studentId: studentId, status: 'active');
+
+      final todayEntries = <ScheduleEntry>[];
+      final today = DateTime.now().weekday;
+
+      for (final enrollment in enrollments) {
+        final courseId = enrollment.course?.id;
+        if (courseId == null) continue;
+        try {
+          final courseSchedule = await ref
+              .read(scheduleServiceProvider)
+              .getCourseSchedule(courseId);
+          final todayClasses = courseSchedule[today];
+          if (todayClasses != null) {
+            todayEntries.addAll(todayClasses);
+          }
+        } catch (_) {}
+      }
+
+      todayEntries.sort((a, b) =>
+          (a.timeBlock?.startTime ?? '')
+              .compareTo(b.timeBlock?.startTime ?? ''));
+      return todayEntries;
+    } catch (_) {
+      return [];
     }
   }
 

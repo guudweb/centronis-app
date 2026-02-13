@@ -19,6 +19,7 @@ class StudentLayout extends ConsumerStatefulWidget {
 class _StudentLayoutState extends ConsumerState<StudentLayout> {
   int _selectedIndex = 0;
 
+  // Bottom navigation: 4 main tabs + "Más"
   static const _destinations = [
     NavigationDestination(
       icon: Icon(LucideIcons.layoutDashboard),
@@ -33,21 +34,31 @@ class _StudentLayoutState extends ConsumerState<StudentLayout> {
       label: 'Notas',
     ),
     NavigationDestination(
-      icon: Icon(LucideIcons.calendarDays),
-      label: 'Calendario',
+      icon: Icon(LucideIcons.clipboardList),
+      label: 'Tareas',
     ),
     NavigationDestination(
-      icon: Icon(LucideIcons.user),
-      label: 'Perfil',
+      icon: Icon(LucideIcons.menu),
+      label: 'Más',
     ),
   ];
 
-  static const _routes = [
+  // Routes for the first 4 bottom nav items
+  static const _bottomRoutes = [
     '/student/dashboard',
     '/student/courses',
     '/student/grades',
-    '/student/events',
-    '/student/profile',
+    '/student/assignments',
+  ];
+
+  // Items shown in the "Más" bottom sheet
+  static const _moreItems = [
+    (icon: LucideIcons.calendar, label: 'Horario', route: '/student/schedule'),
+    (icon: LucideIcons.megaphone, label: 'Anuncios', route: '/student/announcements'),
+    (icon: LucideIcons.calendarDays, label: 'Eventos', route: '/student/events'),
+    (icon: LucideIcons.graduationCap, label: 'Boletín', route: '/student/grades/report-card'),
+    (icon: LucideIcons.userCheck, label: 'Asistencia', route: '/student/attendance'),
+    (icon: LucideIcons.user, label: 'Perfil', route: '/student/profile'),
   ];
 
   // All items for the drawer (wide layout)
@@ -58,8 +69,9 @@ class _StudentLayoutState extends ConsumerState<StudentLayout> {
     DrawerItem(icon: LucideIcons.clipboardList, label: 'Tareas'),
     DrawerItem(icon: LucideIcons.calendar, label: 'Horario'),
     DrawerItem(icon: LucideIcons.megaphone, label: 'Anuncios'),
-    DrawerItem(icon: LucideIcons.calendarDays, label: 'Calendario'),
+    DrawerItem(icon: LucideIcons.calendarDays, label: 'Eventos'),
     DrawerItem(icon: LucideIcons.graduationCap, label: 'Boletín'),
+    DrawerItem(icon: LucideIcons.userCheck, label: 'Asistencia'),
     DrawerItem(icon: LucideIcons.user, label: 'Perfil'),
   ];
 
@@ -72,17 +84,80 @@ class _StudentLayoutState extends ConsumerState<StudentLayout> {
     '/student/announcements',
     '/student/events',
     '/student/grades/report-card',
+    '/student/attendance',
     '/student/profile',
   ];
 
   void _onDestinationSelected(int index) {
+    // Last item (index 4) opens the "Más" bottom sheet
+    if (index == 4) {
+      _showMoreMenu();
+      return;
+    }
     setState(() => _selectedIndex = index);
-    context.go(_routes[index]);
+    context.go(_bottomRoutes[index]);
   }
 
   void _onDrawerItemTap(int index) {
     setState(() => _selectedIndex = index);
     context.go(_allRoutes[index]);
+  }
+
+  void _showMoreMenu() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        final theme = Theme.of(ctx);
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 32,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.onSurfaceVariant
+                        .withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('Más opciones',
+                        style: theme.textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w700)),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ...List.generate(_moreItems.length, (i) {
+                  final item = _moreItems[i];
+                  return ListTile(
+                    leading: Icon(item.icon, size: 22),
+                    title: Text(item.label),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      final routeIndex = _allRoutes.indexOf(item.route);
+                      if (routeIndex >= 0) {
+                        setState(() => _selectedIndex = routeIndex);
+                      }
+                      context.go(item.route);
+                    },
+                  );
+                }),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -111,10 +186,13 @@ class _StudentLayoutState extends ConsumerState<StudentLayout> {
       );
     }
 
+    // For bottom nav: highlight correct tab, or "Más" if on a secondary screen
+    final bottomIndex = _selectedIndex < 4 ? _selectedIndex : 4;
+
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex < 5 ? _selectedIndex : 0,
+        selectedIndex: bottomIndex,
         onDestinationSelected: _onDestinationSelected,
         destinations: _destinations,
       ),
