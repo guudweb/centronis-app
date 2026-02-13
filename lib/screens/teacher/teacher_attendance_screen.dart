@@ -79,9 +79,11 @@ class _TeacherAttendanceScreenState
               _selectedCourse!.courseId,
               date: AppDateUtils.toIso(_selectedDate),
             );
-        for (final record in existing.data ?? <dynamic>[]) {
-          if (record is Attendance && statusMap.containsKey(record.studentId)) {
-            statusMap[record.studentId] = record.status;
+        if (existing.data != null) {
+          for (final record in existing.data!) {
+            if (statusMap.containsKey(record.studentId)) {
+              statusMap[record.studentId] = record.status;
+            }
           }
         }
       } catch (_) {

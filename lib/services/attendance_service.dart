@@ -98,11 +98,22 @@ class AttendanceService {
         if (status != null) 'status': status,
       },
     );
-    return ApiResponse.fromJson(
-      response.data as Map<String, dynamic>,
-      (data) => (data as List<dynamic>)
-          .map((e) => Attendance.fromJson(e as Map<String, dynamic>))
-          .toList(),
+    final json = response.data as Map<String, dynamic>;
+    // API returns grouped by date: data: [{ date, records: [...], stats }]
+    final groups = json['data'] as List<dynamic>? ?? [];
+    final allRecords = <Attendance>[];
+    for (final group in groups) {
+      if (group is Map<String, dynamic>) {
+        final records = group['records'] as List<dynamic>? ?? [];
+        for (final r in records) {
+          allRecords.add(Attendance.fromJson(r as Map<String, dynamic>));
+        }
+      }
+    }
+    return ApiResponse<List<Attendance>>(
+      success: json['success'] == true,
+      message: json['message'] as String? ?? '',
+      data: allRecords,
     );
   }
 
