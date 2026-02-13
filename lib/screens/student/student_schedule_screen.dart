@@ -4,7 +4,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
-import '../../services/courses_service.dart';
+import '../../services/enrollments_service.dart';
 import '../../services/schedule_service.dart';
 import '../../services/teachers_service.dart';
 import '../../widgets/common/loading_widget.dart';
@@ -42,7 +42,6 @@ class _StudentScheduleScreenState
   Future<void> _loadSchedule() async {
     setState(() => _loading = true);
     try {
-      // Get student's courses first, then get schedule for each course
       final auth = ref.read(authProvider);
       final studentId = auth.user?.studentId;
       if (studentId == null) {
@@ -50,16 +49,21 @@ class _StudentScheduleScreenState
         return;
       }
 
-      // Get student's enrolled courses
-      final coursesResponse =
-          await ref.read(coursesServiceProvider).getAll(limit: 50);
+      // Get student's enrollments first (accessible to students)
+      final enrollments = await ref
+          .read(enrollmentsServiceProvider)
+          .getMyEnrollments(studentId: studentId, status: 'active');
+
       final allSchedule = <int, List<ScheduleEntry>>{};
 
-      for (final course in coursesResponse.data) {
+      // Then fetch schedule for each enrolled course
+      for (final enrollment in enrollments) {
+        final courseId = enrollment.course?.id;
+        if (courseId == null) continue;
         try {
           final courseSchedule = await ref
               .read(scheduleServiceProvider)
-              .getCourseSchedule(course.id);
+              .getCourseSchedule(courseId);
           courseSchedule.forEach((day, entries) {
             allSchedule.putIfAbsent(day, () => []).addAll(entries);
           });
