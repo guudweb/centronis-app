@@ -64,10 +64,30 @@ class _TeacherAttendanceScreenState
       final students = await ref
           .read(enrollmentsServiceProvider)
           .getCourseEnrollments(_selectedCourse!.courseId);
+
+      // Default all to 'present'
       final statusMap = <int, String>{};
       for (final s in students) {
         statusMap[s.studentId] = 'present';
       }
+
+      // Load existing attendance for this date/course
+      try {
+        final existing = await ref
+            .read(attendanceServiceProvider)
+            .getByCourse(
+              _selectedCourse!.courseId,
+              date: AppDateUtils.toIso(_selectedDate),
+            );
+        for (final record in existing.data ?? <dynamic>[]) {
+          if (record is Attendance && statusMap.containsKey(record.studentId)) {
+            statusMap[record.studentId] = record.status;
+          }
+        }
+      } catch (_) {
+        // If fetching existing fails, keep defaults
+      }
+
       setState(() {
         _students = students;
         _attendanceStatus = statusMap;
