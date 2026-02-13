@@ -27,9 +27,26 @@ class AnnouncementsService {
       if (type != null) 'type': type,
       if (courseId != null) 'course_id': courseId,
     });
-    return PaginatedResponse.fromJson(
-      response.data as Map<String, dynamic>,
-      Announcement.fromJson,
+    final data = response.data as Map<String, dynamic>;
+    final list = (data['data']?['announcements'] ?? data['data'])
+        as List<dynamic>? ??
+        [];
+    final pagination = data['data']?['pagination'] ?? data['pagination'];
+    return PaginatedResponse<Announcement>(
+      success: data['success'] as bool? ?? true,
+      message: data['message'] as String? ?? '',
+      data: list
+          .map((e) => Announcement.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      pagination: pagination != null
+          ? Pagination.fromJson(pagination as Map<String, dynamic>)
+          : const Pagination(
+              total: 0,
+              page: 1,
+              limit: 10,
+              totalPages: 0,
+              hasNext: false,
+              hasPrev: false),
     );
   }
 
